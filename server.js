@@ -15,9 +15,9 @@ var i = 0;
 wss.on('connection', (ws, request) => {
     ws["id"] = i++;
     console.log('connection open with id ' + ws["id"]);
-    
+
     ws.on('close', () => {
-        console.log('Client '+ws["id"]+' closed connection');
+        console.log('Client ' + ws["id"] + ' closed connection');
     });
 
 
@@ -28,15 +28,23 @@ wss.on('connection', (ws, request) => {
             ws.send(message);
 
             require('request').post({
-                url: 'https://proxy-staging.gigmiddleware.com/staging.rules/api/integration/Webhook/Guts-Staging/test/ca15a6da-e691-403e-9117-c09d7089a7ac',
+                url: 'http://127.0.0.1/43242/',
                 headers: { 'content-type': 'application/json' },
-                form: { "client": ws.id }
-            });
+
+                // form: { "client": ws.id }
+            })
+                .on('error', err => {
+                    console.log(err);
+                });
         }
     });
 });
 
 app.listen(8080, function () {
+    app.get('/', function(req, res, next) {
+        res.send("hi");
+    });
+
     app.post('/test', function (req, res, next) {
         res.send('{}');
         wss.clients.forEach(ws => {
